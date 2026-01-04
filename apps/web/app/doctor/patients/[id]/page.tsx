@@ -1,6 +1,7 @@
+'use client';
+
 import { DiagnosisCard } from '../../../../components/doctor/DiagnosisCard';
 import { ReferralSystem } from '../../../../components/doctor/ReferralSystem';
-'use client';
 
 import { PatientVitalsMonitor } from '../../../../components/doctor/vitals/PatientVitalsMonitor';
 import { ArrowLeft, Plus, FileText, Activity, TrendingUp } from 'lucide-react';
