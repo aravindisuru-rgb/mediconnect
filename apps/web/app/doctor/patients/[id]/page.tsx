@@ -2,9 +2,10 @@
 
 import { DiagnosisCard } from '../../../../components/doctor/DiagnosisCard';
 import { ReferralSystem } from '../../../../components/doctor/ReferralSystem';
-
+import { EnhancedPrescriptionForm } from '../../../../components/doctor/EnhancedPrescriptionForm';
+import { InvestigationOrderForm } from '../../../../components/doctor/InvestigationOrderForm';
 import { PatientVitalsMonitor } from '../../../../components/doctor/vitals/PatientVitalsMonitor';
-import { ArrowLeft, Plus, FileText, Activity, TrendingUp } from 'lucide-react';
+import { ArrowLeft, Plus, FileText, Activity, TrendingUp, Pill, FlaskConical } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -15,6 +16,8 @@ export default function PatientDetailPage() {
     const [vitals, setVitals] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
+    const [showPrescriptionForm, setShowPrescriptionForm] = useState(false);
+    const [showInvestigationForm, setShowInvestigationForm] = useState(false);
 
     useEffect(() => {
         const fetchPatientData = async () => {
@@ -150,10 +153,18 @@ export default function PatientDetailPage() {
                     <div className="bg-blue-50 rounded-xl p-6 border border-blue-100">
                         <h3 className="font-bold text-blue-900 mb-3">Quick Actions</h3>
                         <div className="space-y-2">
-                            <button className="w-full text-left p-3 bg-white rounded-lg border border-blue-200 hover:border-blue-400 text-sm font-medium text-blue-800 transition-colors">
-                                Order Standard Labs (EU)
+                            <button
+                                onClick={() => setShowInvestigationForm(!showInvestigationForm)}
+                                className="w-full text-left p-3 bg-white rounded-lg border border-blue-200 hover:border-blue-400 text-sm font-medium text-blue-800 transition-colors flex items-center gap-2"
+                            >
+                                <FlaskConical className="w-4 h-4" />
+                                Order Investigation
                             </button>
-                            <button className="w-full text-left p-3 bg-white rounded-lg border border-blue-200 hover:border-blue-400 text-sm font-medium text-blue-800 transition-colors">
+                            <button
+                                onClick={() => setShowPrescriptionForm(!showPrescriptionForm)}
+                                className="w-full text-left p-3 bg-white rounded-lg border border-blue-200 hover:border-blue-400 text-sm font-medium text-blue-800 transition-colors flex items-center gap-2"
+                            >
+                                <Pill className="w-4 h-4" />
                                 Prescribe Medication
                             </button>
                             <button className="w-full text-left p-3 bg-white rounded-lg border border-blue-200 hover:border-blue-400 text-sm font-medium text-blue-800 transition-colors">
@@ -163,6 +174,19 @@ export default function PatientDetailPage() {
                     </div>
                 </div>
             </div>
+
+            {/* Enhanced Forms Section */}
+            {showPrescriptionForm && (
+                <div className="mt-6">
+                    <EnhancedPrescriptionForm patientId={id as string} />
+                </div>
+            )}
+
+            {showInvestigationForm && (
+                <div className="mt-6">
+                    <InvestigationOrderForm patientId={id as string} />
+                </div>
+            )}
         </div>
     );
 }

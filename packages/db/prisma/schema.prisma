@@ -104,6 +104,7 @@ model PatientProfile {
   documents       Document[]
   familyHistory   FamilyHistory[]
   emergencyLogs   EmergencyAccessLog[]
+  safetyScreen    PatientSafetyScreen?
 }
 
 // Doctor Profile
@@ -314,16 +315,20 @@ model InvestigationOrder {
   doctorId        String
   doctor          DoctorProfile @relation(fields: [doctorId], references: [id])
   
-  testCodes       String[]  // LOINC codes or internal IDs
+  testCodes       String[]  // LOINC codes or internal IDs (backward compatibility)
+  category        String?   // RADIOLOGICAL, BIOCHEMICAL, HEMATOLOGICAL, MICROBIOLOGICAL, etc.
   clinicalIndication String
   fastingRequired Boolean @default(false)
+  priority        String    @default("ROUTINE") // ROUTINE, URGENT, STAT
   status          String    @default("ORDERED") // ORDERED, SAMPLE_COLLECTED, PROCESSING, COMPLETED
   
   // Privacy & Fulfillment
   targetLabId     String?
   targetLab       Lab?      @relation(fields: [targetLabId], references: [id])
 
+  items           InvestigationOrderItem[]
   results         MedicalRecord[]
+  labResults      LabResult[]
   invoice         Invoice?
   
   createdAt       DateTime  @default(now())
@@ -366,7 +371,14 @@ model PrescriptionItem {
   prescription    Prescription @relation(fields: [prescriptionId], references: [id])
   
   medicationName  String
-  dosage          String
+  dosage          String    // Display string for backward compatibility
+  
+  // Structured Dosage Fields (EU/USA Standards)
+  dosageStrength  String?   // e.g., "500"
+  dosageUnit      String?   // e.g., "mg", "mcg", "mL", "units"
+  dosageForm      String?   // e.g., "tablet", "capsule", "syrup", "injection"
+  routeOfAdmin    String?   // e.g., "ORAL", "IV", "IM", "SC", "TOPICAL", "INHALATION"
+  
   frequency       String
   duration        String
   instructions    String?
@@ -464,8 +476,10 @@ model Allergy {
   patient         PatientProfile @relation(fields: [patientId], references: [id])
   
   allergen        String    // e.g., "Penicillin", "Peanuts"
-  severity        String    // e.g., "MILD", "SEVERE", "LIFE_THREATENING"
-  reaction        String?
+  allergenType    String    @default("DRUG") // DRUG, FOOD, ENVIRONMENTAL
+  severity        String    // e.g., "MILD", "MODERATE", "SEVERE", "LIFE_THREATENING"
+  reaction        String?   // e.g., "Hives", "Anaphylaxis", "Rash"
+  verifiedBy      String?   // Doctor/Pharmacist who verified
   notedAt         DateTime  @default(now())
 }
 
@@ -488,4 +502,156 @@ model EmergencyAccessLog {
   
   reason          String
   accessedAt      DateTime       @default(now())
+}
+
+// Structured Investigation Order Items
+model InvestigationOrderItem {
+  id                    String             @id @default(uuid())
+  investigationOrderId  String
+  investigationOrder    InvestigationOrder @relation(fields: [investigationOrderId], references: [id])
+  
+  category              String             // RADIOLOGICAL, BIOCHEMICAL, HEMATOLOGICAL, MICROBIOLOGICAL
+  testName              String
+  testCode              String?
+  
+  // Radiology-specific fields
+  bodyPart              String?            // e.g., "Knee", "Chest", "Abdomen"
+  views                 String[]           // e.g., ["AP", "LATERAL"], for X-rays
+  laterality            String?            // e.g., "Left", "Right", "Bilateral"
+  withContrast          Boolean            @default(false)
+  
+  // Microbiology-specific fields
+  specimenType          String?            // e.g., "Urine", "Blood", "Sputum"
+  
+  clinicalIndication    String?
+  specialInstructions   String?
+  
+  createdAt             DateTime           @default(now())
+}
+
+// Structured Lab Results
+model LabResult {
+  id                    String             @id @default(uuid())
+  investigationOrderId  String
+  investigationOrder    InvestigationOrder @relation(fields: [investigationOrderId], references: [id])
+  
+  testName              String
+  testCode              String?            // LOINC or internal code
+  value                 String             // Result value (numeric or text)
+  unit                  String?            // e.g., "mg/dL", "mmol/L", "%"
+  referenceRangeLow     String?            // Lower bound of normal range
+  referenceRangeHigh    String?            // Upper bound of normal range
+  flag                  String?            // NORMAL, HIGH, LOW, CRITICAL
+  
+  // Automated flagging fields
+  flagAutomated         String?            // AUTO_NORMAL, AUTO_HIGH, AUTO_LOW, AUTO_CRITICAL
+  deltaFlag             Boolean            @default(false)
+  percentChange         Float?
+  previousValue         String?
+  
+  interpretation        String?            // Additional notes or interpretation
+  
+  testedAt              DateTime           @default(now())
+  reportedBy            String?            // Lab technician ID or name
+}
+
+// Drug Interaction Database
+model DrugInteraction {
+  id                String   @id @default(uuid())
+  drug1Name         String
+  drug1Generic      String?
+  drug2Name         String
+  drug2Generic      String?
+  interactionLevel  String   // CONTRAINDICATED, SERIOUS, MONITOR, MINOR
+  mechanism         String?  // CYP450, Pharmacodynamic, Additive, etc.
+  clinicalEffect    String   // Description of the interaction effect
+  recommendation    String   // What to do about it
+  references        String?  // Source references
+  
+  @@index([drug1Name, drug2Name])
+}
+
+// Lab Test Reference Ranges
+model LabTestReferenceRange {
+  id              String   @id @default(uuid())
+  testCode        String   // LOINC or internal code
+  testName        String
+  
+  // Patient-specific criteria
+  ageMin          Int?     // Minimum age in years (null = no minimum)
+  ageMax          Int?     // Maximum age in years (null = no maximum)
+  gender          String?  // MALE, FEMALE, ALL
+  pregnancyStatus String?  // PREGNANT, LACTATING, NONE
+  
+  // Reference values
+  unit            String
+  lowNormal       String   // Lower bound of normal
+  highNormal      String   // Upper bound of normal
+  criticalLow     String?  // Panic value low
+  criticalHigh    String?  // Panic value high
+  
+  source          String?  // Source of reference range
+  
+  @@index([testCode])
+}
+
+// Patient Safety Screening for Investigation Orders
+model PatientSafetyScreen {
+  id                     String          @id @default(uuid())
+  patientId              String          @unique
+  patient                PatientProfile  @relation(fields: [patientId], references: [id])
+  
+  // MRI Safety
+  hasPacemaker           Boolean         @default(false)
+  hasMetalImplants       Boolean         @default(false)
+  metalImplantDetails    String?
+  
+  // Contrast Safety
+  hasContrastAllergy     Boolean         @default(false)
+  contrastAllergyType    String?         // IODINATED, GADOLINIUM
+  contrastAllergyDetails String?
+  
+  // Pregnancy Status
+  isPregnant             Boolean         @default(false)
+  isLactating            Boolean         @default(false)
+  lastMenstrualPeriod    DateTime?
+  
+  // Other
+  hasRenalImpairment     Boolean         @default(false)
+  lastCreatinine         Float?
+  lastEGFR               Float?
+  
+  lastUpdated            DateTime        @updatedAt
+  updatedBy              String?
+}
+
+// Standardized Investigation Order Sets
+model InvestigationOrderSet {
+  id          String                        @id @default(uuid())
+  name        String                        // "Preoperative Workup", "Diabetes Screening"
+  category    String                        // PREOP, SCREENING, DIAGNOSTIC, MONITORING
+  description String
+  specialty   String?                       // SURGERY, CARDIOLOGY, ENDOCRINOLOGY, etc.
+  items       InvestigationOrderSetItem[]
+  isActive    Boolean                       @default(true)
+  isPublic    Boolean                       @default(false)
+  createdBy   String
+  useCount    Int                           @default(0)
+  createdAt   DateTime                      @default(now())
+  updatedAt   DateTime                      @updatedAt
+}
+
+model InvestigationOrderSetItem {
+  id              String                 @id @default(uuid())
+  orderSetId      String
+  orderSet        InvestigationOrderSet  @relation(fields: [orderSetId], references: [id], onDelete: Cascade)
+  
+  testCategory    String                 // RADIOLOGICAL, BIOCHEMICAL, HEMATOLOGICAL, MICROBIOLOGICAL
+  testName        String
+  testCode        String?
+  isRequired      Boolean                @default(true)
+  instructions    String?
+  displayOrder    Int                    @default(0)
+  
+  @@index([orderSetId])
 }

@@ -19,6 +19,7 @@ import { EmergencyModule } from './emergency/emergency.module';
 import { TimelineModule } from './timeline/timeline.module';
 import { PricingModule } from './pricing/pricing.module';
 import { AuditInterceptor } from './audit/audit.interceptor';
+import { CdsModule } from './cds/cds.module';
 
 import { PatientsModule } from './patients/patients.module';
 
@@ -42,7 +43,8 @@ import { PatientsModule } from './patients/patients.module';
         DocumentsModule,
         EmergencyModule,
         PricingModule,
-        TimelineModule
+        TimelineModule,
+        CdsModule
     ],
     controllers: [],
     providers: [
