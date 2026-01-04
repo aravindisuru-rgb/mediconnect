@@ -4,7 +4,8 @@
   "description": "Digital Healthcare Ecosystem Monorepo",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "npm run db:generate --workspace=@repo/db"
   },
   "packageManager": "npm@10.2.4",
   "keywords": [],
