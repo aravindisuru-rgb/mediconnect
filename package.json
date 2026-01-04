@@ -1,0 +1,20 @@
+{
+  "name": "digital-health-ecosystem",
+  "version": "1.0.0",
+  "description": "Digital Healthcare Ecosystem Monorepo",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "dependencies": {
+    "rxjs": "^7.8.2"
+  }
+}
