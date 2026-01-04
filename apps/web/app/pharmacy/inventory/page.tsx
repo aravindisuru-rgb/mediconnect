@@ -1,3 +1,5 @@
+'use client';
+
 import { Search, Plus, AlertCircle } from "lucide-react";
 
 export default function InventoryPage() {
