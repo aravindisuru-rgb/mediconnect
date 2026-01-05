@@ -4,8 +4,17 @@ import { Search, Filter } from "lucide-react";
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 
+interface Patient {
+    id: string;
+    firstName: string;
+    lastName: string;
+    age: number;
+    gender: string;
+    appointments?: Array<{ startTime: string }>;
+}
+
 export default function PatientsPage() {
-    const [patients, setPatients] = useState<any[]>([]);
+    const [patients, setPatients] = useState<Patient[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

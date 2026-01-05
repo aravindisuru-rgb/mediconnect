@@ -1,8 +1,16 @@
 import React, { useState } from 'react';
 import { Plus, Trash2, Save, Printer } from "lucide-react";
 
+interface PrescriptionItem {
+    medicationName: string;
+    dosage: string;
+    frequency: string;
+    duration: string;
+    instructions: string;
+}
+
 export function PrescriptionForm({ patientId }: { patientId: string }) {
-    const [items, setItems] = useState([{ medicationName: '', dosage: '', frequency: '', duration: '', instructions: '' }]);
+    const [items, setItems] = useState<PrescriptionItem[]>([{ medicationName: '', dosage: '', frequency: '', duration: '', instructions: '' }]);
     const [pharmacyNote, setPharmacyNote] = useState('');
     const [substitutionPermitted, setSubstitutionPermitted] = useState(true);
     const [refillsAuthorized, setRefillsAuthorized] = useState(0);
@@ -33,9 +41,8 @@ export function PrescriptionForm({ patientId }: { patientId: string }) {
         setItems(items.filter((_, i) => i !== index));
     };
 
-    const updateItem = (index: number, field: string, value: string) => {
+    const updateItem = (index: number, field: keyof PrescriptionItem, value: string) => {
         const newItems = [...items];
-        // @ts-ignore
         newItems[index][field] = value;
         setItems(newItems);
     };

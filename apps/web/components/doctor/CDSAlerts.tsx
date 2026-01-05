@@ -42,6 +42,7 @@ export function CDSAlerts({ patientId, medications, onAlertsChange }: CDSAlertsP
         }
 
         checkAllCDS();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [medications, patientId]);
 
     const checkAllCDS = async () => {
@@ -57,14 +58,15 @@ export function CDSAlerts({ patientId, medications, onAlertsChange }: CDSAlertsP
             setInteractionAlerts(interactions || []);
 
             // Check allergies
+            let allergyData: AllergyAlert[] = [];
             if (patientId) {
                 const allergiesRes = await fetch('/api/cds/check-allergies', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ patientId, medications }),
                 });
-                const allergies = await allergiesRes.json();
-                setAllergyAlerts(allergies || []);
+                allergyData = await allergiesRes.json();
+                setAllergyAlerts(allergyData || []);
             }
 
             // Check duplicates      
@@ -76,7 +78,7 @@ export function CDSAlerts({ patientId, medications, onAlertsChange }: CDSAlertsP
             const duplicates = await duplicatesRes.json();
             setDuplicateWarnings(duplicates || []);
 
-            const hasAlerts = interactions.length > 0 || allergies.length > 0 || duplicates.length > 0;
+            const hasAlerts = interactions.length > 0 || allergyData.length > 0 || duplicates.length > 0;
             onAlertsChange?.(hasAlerts);
         } catch (error) {
             console.error('CDS check failed:', error);

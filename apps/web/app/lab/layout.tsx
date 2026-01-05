@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { LayoutDashboard, TestTube, CreditCard, LogOut } from "lucide-react";
+import { LayoutDashboard, TestTube, CreditCard } from "lucide-react";
 
 export default function LabLayout({
     children,

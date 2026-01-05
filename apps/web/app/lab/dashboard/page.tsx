@@ -4,8 +4,26 @@ import { Activity, DollarSign, Users, Clock } from "lucide-react";
 
 import { useState, useEffect } from 'react';
 
+interface Item {
+    testName: string;
+}
+
+interface Order {
+    id: string;
+    status: string;
+    createdAt: string;
+    items?: Item[];
+    patient?: {
+        firstName: string;
+        lastName: string;
+    };
+    doctor?: {
+        lastName: string;
+    };
+}
+
 export default function LabDashboard() {
-    const [orders, setOrders] = useState<any[]>([]);
+    const [orders, setOrders] = useState<Order[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -70,7 +88,7 @@ export default function LabDashboard() {
                         <div key={order.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
                             <div>
                                 <p className="font-bold text-slate-900">
-                                    {order.items?.map((i: any) => i.testName).join(', ') || 'Diagnostic Tests'}
+                                    {order.items?.map((i: Item) => i.testName).join(', ') || 'Diagnostic Tests'}
                                 </p>
                                 <p className="text-sm text-slate-600">
                                     Patient: {order.patient?.firstName} {order.patient?.lastName} • Dr. {order.doctor?.lastName}

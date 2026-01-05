@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, Plus, AlertCircle } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 
 export default function InventoryPage() {
     const inventory = [

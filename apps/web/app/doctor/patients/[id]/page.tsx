@@ -10,10 +10,31 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
+interface VitalReading {
+    value: number;
+}
+
+interface Vitals {
+    BP_SYSTOLIC?: VitalReading;
+    BP_DIASTOLIC?: VitalReading;
+    HEART_RATE?: VitalReading;
+    GLUCOSE?: VitalReading;
+    TEMP?: VitalReading;
+    WEIGHT?: VitalReading;
+}
+
+interface Patient {
+    id: string;
+    firstName: string;
+    lastName: string;
+    gender: string;
+    age: number;
+}
+
 export default function PatientDetailPage() {
     const { id } = useParams();
-    const [patient, setPatient] = useState<any>(null);
-    const [vitals, setVitals] = useState<any>(null);
+    const [patient, setPatient] = useState<Patient | null>(null);
+    const [vitals, setVitals] = useState<Vitals | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('overview');
     const [showPrescriptionForm, setShowPrescriptionForm] = useState(false);

@@ -4,8 +4,22 @@ import { Search, Package, Clock, CheckCircle } from "lucide-react";
 
 import { useState, useEffect } from 'react';
 
+interface Prescription {
+   id: string;
+   status: string;
+   createdAt: string;
+   items?: unknown[];
+   patient?: {
+      firstName: string;
+      lastName: string;
+   };
+   doctor?: {
+      lastName: string;
+   };
+}
+
 export default function PharmacyDashboard() {
-   const [prescriptions, setPrescriptions] = useState<any[]>([]);
+   const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
    const [loading, setLoading] = useState(true);
 
    useEffect(() => {
@@ -92,7 +106,7 @@ export default function PharmacyDashboard() {
                   </tr>
                </thead>
                <tbody className="divide-y divide-slate-200">
-                  {prescriptions.map((rx: any) => (
+                  {prescriptions.map((rx: Prescription) => (
                      <tr key={rx.id} className="hover:bg-slate-50">
                         <td className="px-6 py-4 font-medium text-blue-600">RX-{rx.id.slice(0, 5)}</td>
                         <td className="px-6 py-4">{rx.patient?.firstName} {rx.patient?.lastName}</td>

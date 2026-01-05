@@ -21,13 +21,26 @@ interface InvestigationSafetyCheckerProps {
     onSafetyChange?: (isSafe: boolean) => void;
 }
 
+interface PatientSafety {
+    hasPacemaker?: boolean;
+    hasMetalImplants?: boolean;
+    metalImplantDetails?: string;
+    hasContrastAllergy?: boolean;
+    contrastAllergyType?: string;
+    contrastAllergyDetails?: string;
+    hasRenalImpairment?: boolean;
+    lastEGFR?: number;
+    lastCreatinine?: number;
+    isPregnant?: boolean;
+}
+
 export function InvestigationSafetyChecker({
     patientId,
     selectedTests,
     onSafetyChange
 }: InvestigationSafetyCheckerProps) {
     const [safetyChecks, setSafetyChecks] = useState<SafetyCheck[]>([]);
-    const [patientSafety, setPatientSafety] = useState<any>(null);
+    const [patientSafety, setPatientSafety] = useState<PatientSafety | null>(null);
     const [dismissed, setDismissed] = useState<Set<string>>(new Set());
     const [loading, setLoading] = useState(false);
 
@@ -39,6 +52,7 @@ export function InvestigationSafetyChecker({
         }
 
         fetchSafetyAndCheck();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedTests, patientId]);
 
     const fetchSafetyAndCheck = async () => {

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { User, Users, ClipboardList, Calendar, LogOut, Languages } from "lucide-react";
+import { Users, ClipboardList, Calendar, LogOut, Languages } from "lucide-react";
 import { getTranslation, Language } from "../../lib/i18n/translations";
 
 export default function DoctorLayout({
@@ -11,7 +11,7 @@ export default function DoctorLayout({
 }) {
     const [lang, setLang] = useState<Language>('en');
 
-    const t = (key: any) => getTranslation(lang, key);
+    const t = (key: string) => getTranslation(lang, key as Parameters<typeof getTranslation>[1]);
 
     return (
         <div className="flex h-screen bg-slate-50">

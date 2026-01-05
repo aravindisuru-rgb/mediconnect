@@ -194,19 +194,20 @@ export class OrderSetsService {
         ];
 
         for (const orderSet of orderSets) {
+            const { items, ...orderSetData } = orderSet;
             await prisma.investigationOrderSet.upsert({
                 where: { id: orderSet.id },
                 create: {
                     ...orderSet,
                     items: {
-                        create: orderSet.items.map((item) => ({
+                        create: items.map((item) => ({
                             ...item,
                             id: `${orderSet.id}-item-${item.displayOrder}`,
                         })),
                     },
                 },
                 update: {
-                    ...orderSet,
+                    ...orderSetData,
                 },
             });
         }

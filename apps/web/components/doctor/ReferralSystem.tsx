@@ -1,10 +1,7 @@
-import React, { useState } from 'react';
-import { Send, Search, User } from "lucide-react";
+import React from 'react';
+import { Send, Search } from "lucide-react";
 
 export function ReferralSystem() {
-    const [specialty, setSpecialty] = useState('');
-    const [doctorSearch, setDoctorSearch] = useState('');
-
     return (
         <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
             <h2 className="text-lg font-bold text-slate-900 mb-4">New Specialist Referral</h2>

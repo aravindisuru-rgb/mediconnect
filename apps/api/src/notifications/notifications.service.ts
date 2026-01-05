@@ -24,11 +24,10 @@ export class NotificationsService {
     private async saveNotification(userId: string, type: string, title: string, message: string) {
         return prisma.notification.create({
             data: {
-                userId: userId,
+                recipientId: userId,
                 type,
-                channel: 'SYSTEM', // Default channel
                 title,
-                body: message,
+                message: message,
                 status: 'SENT'
             }
         });

@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, Filter, FileText } from "lucide-react";
+import { Filter } from "lucide-react";
 
 export default function DispenseHistoryPage() {
     return (

@@ -6,7 +6,7 @@ interface MedicationCheck {
     genericName?: string;
 }
 
-interface InteractionAlert {
+export interface InteractionAlert {
     severity: 'CONTRAINDICATED' | 'SERIOUS' | 'MONITOR' | 'MINOR';
     drug1: string;
     drug2: string;
@@ -15,7 +15,7 @@ interface InteractionAlert {
     mechanism?: string;
 }
 
-interface AllergyAlert {
+export interface AllergyAlert {
     allergen: string;
     severity: string;
     reaction?: string;

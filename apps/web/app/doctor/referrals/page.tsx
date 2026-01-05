@@ -1,11 +1,28 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Send, User, Calendar, AlertCircle } from "lucide-react";
+import { Send, Calendar, AlertCircle } from "lucide-react";
+
+interface Referral {
+    id: string;
+    priority: string;
+    status: string;
+    clinicalNotes: string;
+    specialistReport?: string;
+    feedbackDate?: string;
+    createdAt: string;
+    patient?: {
+        firstName: string;
+        lastName: string;
+    };
+    fromDoctor?: {
+        lastName: string;
+    };
+}
 
 export default function SpecialistReferralsPage() {
-    const [referrals, setReferrals] = useState<any[]>([]);
+    const [referrals, setReferrals] = useState<Referral[]>([]);
     const [loading, setLoading] = useState(true);
-    const [selectedReferral, setSelectedReferral] = useState<any>(null);
+    const [selectedReferral, setSelectedReferral] = useState<Referral | null>(null);
     const [report, setReport] = useState('');
 
     useEffect(() => {
@@ -48,8 +65,8 @@ export default function SpecialistReferralsPage() {
                             key={ref.id}
                             onClick={() => setSelectedReferral(ref)}
                             className={`p-4 rounded-xl border cursor-pointer transition-all ${selectedReferral?.id === ref.id
-                                    ? 'bg-blue-50 border-blue-200 shadow-md'
-                                    : 'bg-white border-slate-200 hover:border-blue-300'
+                                ? 'bg-blue-50 border-blue-200 shadow-md'
+                                : 'bg-white border-slate-200 hover:border-blue-300'
                                 }`}
                         >
                             <div className="flex justify-between items-start mb-2">
@@ -82,7 +99,7 @@ export default function SpecialistReferralsPage() {
                             <div>
                                 <h3 className="text-sm font-semibold text-slate-900 mb-2">Clinical Notes from GP</h3>
                                 <div className="p-4 bg-slate-50 rounded-lg text-slate-700 leading-relaxed italic">
-                                    "{selectedReferral.clinicalNotes}"
+                                    &ldquo;{selectedReferral.clinicalNotes}&rdquo;
                                 </div>
                             </div>
 
@@ -108,7 +125,7 @@ export default function SpecialistReferralsPage() {
                                     <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-lg text-emerald-900 leading-relaxed font-medium">
                                         {selectedReferral.specialistReport}
                                     </div>
-                                    <p className="text-xs text-slate-400 mt-2">Submitted on {new Date(selectedReferral.feedbackDate).toLocaleDateString()}</p>
+                                    <p className="text-xs text-slate-400 mt-2">Submitted on {selectedReferral.feedbackDate ? new Date(selectedReferral.feedbackDate).toLocaleDateString() : 'N/A'}</p>
                                 </div>
                             )}
                         </div>

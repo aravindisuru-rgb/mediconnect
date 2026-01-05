@@ -1,7 +1,29 @@
 import React from 'react';
 import { Activity, Thermometer, Droplets, Weight } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
-export function PatientVitalsMonitor({ vitals }: { vitals: any }) {
+interface VitalReading {
+    value: number;
+}
+
+interface Vitals {
+    BP_SYSTOLIC?: VitalReading;
+    BP_DIASTOLIC?: VitalReading;
+    HEART_RATE?: VitalReading;
+    GLUCOSE?: VitalReading;
+    TEMP?: VitalReading;
+    WEIGHT?: VitalReading;
+}
+
+interface StatProps {
+    label: string;
+    value: number | string | null | undefined;
+    unit: string;
+    icon: LucideIcon;
+    color: string;
+}
+
+export function PatientVitalsMonitor({ vitals }: { vitals: Vitals | null }) {
     if (!vitals || Object.keys(vitals).length === 0) {
         return (
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-6 text-center text-slate-500 italic">
@@ -10,7 +32,7 @@ export function PatientVitalsMonitor({ vitals }: { vitals: any }) {
         );
     }
 
-    const Stat = ({ label, value, unit, icon: Icon, color }: any) => (
+    const Stat = ({ label, value, unit, icon: Icon, color }: StatProps) => (
         <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-4">
             <div className={`p-3 rounded-lg ${color}`}>
                 <Icon className="w-5 h-5" />

@@ -5,28 +5,29 @@ import { FileText, Send, ChevronDown, ChevronRight, AlertCircle } from "lucide-r
 import { InvestigationSafetyChecker } from './InvestigationSafetyChecker';
 import { OrderSetSelector } from './OrderSetSelector';
 
-interface RadiologicalTest {
-    testType: 'X-Ray' | 'CT' | 'MRI' | 'Ultrasound' | 'Mammography';
+interface TestDetails {
+    testType?: string;
     bodyPart?: string;
     views?: string[];
-    laterality?: 'Left' | 'Right' | 'Bilateral';
+    laterality?: string;
     withContrast?: boolean;
+    panel?: string;
+    tests?: string[];
+    subType?: string;
+    testCode?: string;
+    specimen?: string;
+    testName?: string;
 }
 
-interface BiochemicalTest {
-    panel: string;
-    tests: string[];
-}
-
-interface InvestigationOrderItem {
+interface SelectedTest {
     category: string;
-    selected: boolean;
-    details: RadiologicalTest | BiochemicalTest | any;
+    testName: string;
+    details: TestDetails;
 }
 
 export function InvestigationOrderForm({ patientId, doctorId }: { patientId: string; doctorId?: string }) {
     const [activeCategory, setActiveCategory] = useState<string | null>('RADIOLOGICAL');
-    const [selectedTests, setSelectedTests] = useState<any[]>([]);
+    const [selectedTests, setSelectedTests] = useState<SelectedTest[]>([]);
     const [clinicalIndication, setClinicalIndication] = useState('');
     const [priority, setPriority] = useState('ROUTINE');
     const [specialInstructions, setSpecialInstructions] = useState('');
@@ -79,7 +80,7 @@ export function InvestigationOrderForm({ patientId, doctorId }: { patientId: str
         portable: false
     });
 
-    const addTest = (category: string, testName: string, details: any = {}) => {
+    const addTest = (category: string, testName: string, details: TestDetails = {}) => {
         setSelectedTests([...selectedTests, { category, testName, details }]);
     };
 
@@ -123,12 +124,17 @@ export function InvestigationOrderForm({ patientId, doctorId }: { patientId: str
         }
     };
 
-    const CategorySection = ({ title, icon, isOpen, onClick, children }: any) => (
+    const CategorySection = ({ title, icon, isOpen, onClick, children }: {
+        title: string;
+        icon: string;
+        isOpen: boolean;
+        onClick: () => void;
+        children: React.ReactNode;
+    }) => (
         <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
             <button
                 onClick={onClick}
-                className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors"
-            >
+                className="w-full flex items-center justify-between p-4 hover:bg-slate-50 transition-colors">
                 <div className="flex items-center gap-3">
                     <span className="text-2xl">{icon}</span>
                     <span className="font-bold text-slate-900">{title}</span>
@@ -238,7 +244,7 @@ export function InvestigationOrderForm({ patientId, doctorId }: { patientId: str
                                     <select
                                         className="w-full p-2 border border-slate-300 rounded text-sm"
                                         value={xrayForm.laterality}
-                                        onChange={(e) => setXrayForm({ ...xrayForm, laterality: e.target.value as any })}
+                                        onChange={(e) => setXrayForm({ ...xrayForm, laterality: e.target.value as 'Left' | 'Right' | 'Bilateral' })}
                                     >
                                         <option value="Bilateral">Bilateral</option>
                                         <option value="Left">Left</option>

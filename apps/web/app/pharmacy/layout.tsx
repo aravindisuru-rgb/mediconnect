@@ -1,7 +1,7 @@
 'use client';
 
 import Link from "next/link";
-import { LayoutDashboard, Package, History, LogOut, Pill, DollarSign } from "lucide-react";
+import { LayoutDashboard, Package, History, LogOut, DollarSign } from "lucide-react";
 
 export default function PharmacyLayout({
     children,

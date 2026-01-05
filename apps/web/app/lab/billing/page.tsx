@@ -1,9 +1,20 @@
 "use client";
 import { useState, useEffect } from 'react';
-import { Plus, Search, Edit2, Clock, CheckCircle, FileText, DollarSign } from "lucide-react";
+import { Edit2, FileText } from "lucide-react";
+
+interface Invoice {
+    id: string;
+    status: string;
+    createdAt: string;
+    totalAmount: number;
+    patient?: {
+        firstName: string;
+        lastName: string;
+    };
+}
 
 export default function LabBillingPage() {
-    const [invoices, setInvoices] = useState<any[]>([]);
+    const [invoices, setInvoices] = useState<Invoice[]>([]);
     const [loading, setLoading] = useState(true);
 
     const tests = [
